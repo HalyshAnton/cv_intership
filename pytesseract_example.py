@@ -4,7 +4,6 @@ import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
 
-
 # read image and show
 img = Image.open('data/printed2.jpg')
 img.show()

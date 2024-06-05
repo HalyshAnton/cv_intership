@@ -105,7 +105,7 @@ def main():
     optimizer = optim.Adadelta(model.parameters(), lr=1e-3)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=0.99)
-    for epoch in range(1, 1 + 1):
+    for epoch in range(1, 2):
         train(model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
         scheduler.step()

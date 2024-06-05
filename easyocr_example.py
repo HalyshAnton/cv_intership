@@ -11,6 +11,7 @@ img.show()
 
 img = np.array(img)
 
+
 # ocr
 reader = easyocr.Reader(['en'])
 results = reader.readtext(img)
