@@ -109,12 +109,10 @@ def preprocessing(pdf_path, show=False):
     prep_imgs = [preprocess_image(img) for img in imgs]
 
     if show:
-        for i, img, prep_img in zip(range(10), imgs, prep_imgs):
+        for img, prep_img in zip(imgs, prep_imgs):
             cv2.imshow('Original', img[:, :, ::-1])
             cv2.imshow('Preprocessed', prep_img)
 
-            # cv2.imwrite(f'results/original_{i+1}.png', img)
-            # cv2.imwrite(f'results/preprocessed_{i + 1}.png', prep_img)
             cv2.waitKey(0)
 
     return prep_imgs
