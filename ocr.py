@@ -12,32 +12,44 @@ from read_pdf import read_pdf
 
 
 warnings.filterwarnings('ignore')
-pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
 
 model = lp.Detectron2LayoutModel('lp://PubLayNet/mask_rcnn_X_101_32x8d_FPN_3x/config',
                                  extra_config=["MODEL.ROI_HEADS.SCORE_THRESH_TEST", 0.4],
                                  label_map={0: "Text", 1: "Title", 2: "List",
                                             3:"Table", 4:"Figure"})
 
-def union_blocks(layout, thresh_width=5):
+def merge_blocks(layout, thresh_width=5):
+    """
+    Merge intersecting lp.TextBlock from layout
+
+    Args:
+        layout (lp.Layout): layout with y-coordinate
+        sorted TextBlocks
+
+        thresh_width (int): minimum intersecting width
+        in pixels needed to merge 2 TextBlock
+
+    Return:
+        lp.Layout: layout with merged blocks
+    """
     if len(layout) == 0:
         return layout
 
     blocks = []
-    prep_block = layout[0]
+    current_block = layout[0]
 
     for block in layout:
-        inter = prep_block.intersect(block)
+        inter = current_block.intersect(block)
         inter_width = inter.block.y_2 - inter.block.y_1
 
         #if block.is_in(prep_block, center=True):
         if inter_width > thresh_width:
-            prep_block = prep_block.union(block)
+            current_block = current_block.union(block)
         else:
-            blocks.append(prep_block)
-            prep_block = block
+            blocks.append(current_block)
+            current_block = block
 
-    blocks.append(prep_block)
+    blocks.append(current_block)
     return lp.Layout(blocks)
 
 
@@ -122,7 +134,7 @@ def pdf_to_word(pdf_path, save=False):
 
         text_blocks = lp.Layout([b for b in layout if b.type != 'Figure'])
         text_blocks.sort(key=lambda b: b.coordinates[1], inplace=True)
-        text_blocks = union_blocks(text_blocks)
+        text_blocks = merge_blocks(text_blocks)
 
         for block in text_blocks:
             text = get_text(block, prep_img)
@@ -138,7 +150,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image preprocessing')
 
     parser.add_argument('--path', type=str,
-                        default='Scan_202465_4io-R77sgBI (1).pdf',
+                        default='results/Scan_202465_4io-R77sgBI (1).pdf',
                         help='path to pdf file')
 
     parser.add_argument('--save', type=bool, default=True,
