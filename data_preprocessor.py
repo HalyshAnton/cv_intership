@@ -54,7 +54,7 @@ def deskew_image(img, delta=5, max_angle=50):
     return rotated
 
 
-def preprocess_image(img, crop_margin=10):
+def preprocess_image(img, crop_margin=20):
     """
     Preprocess image for OCR.
 
@@ -64,16 +64,19 @@ def preprocess_image(img, crop_margin=10):
     :param crop_margin: int
          margin for removing edges
 
-    :return: np.ndarray of shape (K, L)
-        preprocessed image
+    :return: np.ndarray of shape (K, L, 3)
+        preprocessed image in RGB format
     """
 
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
-    img = cv2.adaptiveThreshold(img, 255,
+    # cv2.adaptiveThreshold doesn't support BINARY_TRUNC
+    # so this is custom realization
+    mask = cv2.adaptiveThreshold(img, 1,
                                 cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                 cv2.THRESH_BINARY,
-                                11, 5)
+                                11, 5).astype(bool)
+    img[mask] = 255
 
     img = cv2.fastNlMeansDenoising(img, None, 3, 7, 21)
 
@@ -84,6 +87,10 @@ def preprocess_image(img, crop_margin=10):
           crop_margin: -crop_margin,
           crop_margin: -crop_margin
           ]
+
+    shape = img.shape
+    img = img[:, :, np.newaxis]
+    img = np.broadcast_to(img, shape + (3,))
 
     return img
 
