@@ -1,9 +1,23 @@
-# OCR
+# Text classification
+Classifier for printed and handwritten text
 
-Convert pdf file to docx file
+## Model Architecture
+Model consists of 2 parts:
+* pre-trained feature extractor(vgg19_bn)
+* 1-layer classifier head with dropout
 
-# Run line
 
-``
-py ocr.py --path 'path to pdf file' --save 'True for saving docx file'
-``
+Training params
+* loss - bce
+* optimizer - Adam with lr=1e-3
+* scheduler - ReduceLROnPlateau
+
+## Results
+Training results for 10 epochs and cross-validation with 3 folds
+![](results/loss.png)
+
+![](results/accuracy.png)
+
+![](results/confusion_matrix.png)
+
+![](results/classification_report.png)
