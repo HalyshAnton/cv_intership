@@ -75,7 +75,7 @@ def preprocess_image(img, crop_margin=20):
     mask = cv2.adaptiveThreshold(img, 1,
                                 cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                 cv2.THRESH_BINARY,
-                                11, 5).astype(bool)
+                                21, 5).astype(bool)
     img[mask] = 255
 
     img = cv2.fastNlMeansDenoising(img, None, 3, 7, 21)

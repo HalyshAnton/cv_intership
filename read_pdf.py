@@ -3,7 +3,6 @@ import numpy as np
 import cv2
 import os
 
-
 def read_pdf(pdf_path):
     if not os.path.isfile(pdf_path):
         return []
