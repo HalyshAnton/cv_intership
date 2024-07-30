@@ -1,13 +1,51 @@
+import io
 import pymupdf
 import numpy as np
 import cv2
-import os
+import PyPDF2
 
-def read_pdf(pdf_path):
-    if not os.path.isfile(pdf_path):
-        return []
 
-    pdf_doc = pymupdf.open(pdf_path)
+def pypdf2_to_pymupdf(pdf_reader):
+    """
+    Converts a PyPDF2 PdfReader object to a PyMuPDF document.
+
+    Args:
+        pdf_reader (PyPDF2.PdfReader): A PyPDF2 PdfReader object
+        representing the PDF to be converted.
+
+    Returns:
+        pymupdf.Document: A PyMuPDF Document object.
+    """
+    pdf_bytes = io.BytesIO()
+
+    pdf_writer = PyPDF2.PdfWriter()
+
+    for page in pdf_reader.pages:
+        pdf_writer.add_page(page)
+
+    pdf_writer.write(pdf_bytes)
+    pdf_bytes.seek(0)
+
+    fitz_doc = pymupdf.open(stream=pdf_bytes.read(), filetype="pdf")
+
+    return fitz_doc
+
+
+def read_pdf(pdf_file):
+    """
+    Reads a PDF file and extracts each page as an image using PyMuPDF.
+
+    Args:
+        pdf_file (UploadedFile): A file-like object representing
+        the PDF to be processed.
+
+    Returns:
+        list: A list of numpy arrays, each representing
+        an image of a page in the PDF.
+    """
+
+    pdf_reader = PyPDF2.PdfReader(pdf_file)
+    pdf_doc = pypdf2_to_pymupdf(pdf_reader)
     imgs = []
 
     for page in pdf_doc:
