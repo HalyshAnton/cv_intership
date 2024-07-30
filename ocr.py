@@ -221,7 +221,7 @@ def pdf_to_word(pdf_path):
     return document
 
 
-def digital_to_word(pdf_path):
+def digital_to_word(pdf_file):
     """
     Convert digital pdf file to docx file.
 
@@ -235,7 +235,7 @@ def digital_to_word(pdf_path):
     """
 
     try:
-        doc = pymupdf.open(pdf_path)
+        doc = pymupdf.open(stream=pdf_file.read(), filetype='pdf')
     except:
         return None, False
 
@@ -276,6 +276,8 @@ def main(pdf_path, save=False):
     if save:
         filename = pdf_path[:-4] + '.docx'
         document.save(filename)
+
+    return document
 
 
 if __name__ == '__main__':
