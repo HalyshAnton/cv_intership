@@ -31,5 +31,5 @@ python ocr.py --path "path_to_pdf_file" --save True
 1. **Image Processing**: Enhances scanned images using techniques like noise reduction, binarization, and skew correction.
 2. **Layout Parsing**: Identifies document structure (headings, paragraphs, tables) to retain formatting.
 3. **Text Recognition**: Applies trained image classifier to distinguish between handwritten and printed text.
-4. **Text-to-Image Model**: Uses AI-based reconstruction to enhance document fidelity.
+4. **Text-to-Image Model**: Uses pytesseract and easyocr to extract text from images.
 5. **DOCX Generation**: Assembles recognized text and layout into a structured DOCX file.
